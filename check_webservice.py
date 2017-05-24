@@ -57,13 +57,13 @@ def array_to_dict(arr):
 			dict[k] = v
 	return dict
 
-def send_request(server, path, verb, timeout, content={}, headers={}):
+def send_request(server, path, verb, timeout, protocol, content={}, headers={}):
 
 	# No need for keeping the connection alive.
 	headers['Connection'] = 'Close'
 	headers['User-Agent'] = 'Nagios Webservice Tester Plugin'
 
-	url = 'http://' + server + ":" + str(port) + path
+	url = protocol + '://' + server + ":" + str(port) + path
 	if verbose: print "URL: " + url + "\n"
 
 	if verb.upper() == 'POST':
@@ -118,6 +118,7 @@ response = ws.get('response', {})
 server  = request.get('server', '')
 path    = request.get('path', '')
 port    = request.get('port', '')
+protocol = request.get('protocol', 'http')
 verb    = request.get('verb', '')
 content = request.get('content', '')
 headers = request.get('headers', {})
@@ -131,7 +132,7 @@ if verb.upper() == 'POST' and len(content) == 0:
 	sys.exit("You want a POST request, but provided no Content to post.")
 
 # Send the actual request.
-data = send_request(server, path, verb, timeout, content, headers)
+data = send_request(server, path, verb, timeout, protocol, content, headers)
 
 request_headers  = data.get('request_headers', '')
 response_headers = data.get('response_headers', '')
